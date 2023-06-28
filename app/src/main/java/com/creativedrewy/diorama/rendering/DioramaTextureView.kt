@@ -54,14 +54,12 @@ class MyRenderer(
     override fun onRenderSurfaceSizeChanged(gl: GL10?, width: Int, height: Int) {
         super.onRenderSurfaceSizeChanged(gl, width, height)
 
-        Log.v("Andrew", "Your width: $width, height: $height")
+        val camera2D = Camera2D()
+        camera2D.width = width.toDouble()
+        camera2D.height = height.toDouble()
+        camera2D.setProjectionMatrix(0, 0)
 
-        val orthoCamera = Camera2D()
-        orthoCamera.width = width.toDouble()
-        orthoCamera.height = height.toDouble()
-        orthoCamera.setProjectionMatrix(0, 0)
-
-        currentScene.switchCamera(orthoCamera)
+        currentScene.switchCamera(camera2D)
     }
 
     private var previousX = 0f
@@ -69,24 +67,27 @@ class MyRenderer(
     private var previousRot = 0.0
 
     private var fX = 0f
-    private var fY: Float = 0f
-    private var sX: Float = 0f
-    private var sY: Float = 0f
+    private var fY = 0f
+    private var sX = 0f
+    private var sY = 0f
     private var angle = 0f
     private var lastAngle = 0f
     private var startScale = 0.0
     private var startDist = 0.0
 
     override fun onTouchEvent(event: MotionEvent) {
-        val x: Float = event.x
-        val y: Float = event.y
-
         when (event.action) {
             MotionEvent.ACTION_DOWN -> {
+                Log.v("Andrew", "Pointer 1 down")
+
                 sX = event.getX(0);
                 sY = event.getY(0);
+                previousX = sX
+                previousY = sY
             }
             MotionEvent.ACTION_POINTER_2_DOWN -> {
+                Log.v("Andrew", "Pointer 2 down")
+
                 fX = event.getX(1);
                 fY = event.getY(1);
 
@@ -99,11 +100,18 @@ class MyRenderer(
             }
             MotionEvent.ACTION_MOVE -> {
                 if (event.pointerCount == 1) {
+                    Log.v("Andrew", "Single pointer move")
+                    val x: Float = event.getX(0)
+                    val y: Float = event.getY(0)
+
                     val dx: Float = x - previousX
                     val dy: Float = y - previousY
 
-//                    plane.x += dx
-//                    plane.y += -dy
+                    plane.x += dx
+                    plane.y += -dy
+
+                    previousX = x
+                    previousY = y
                 } else if (event.pointerCount == 2) {
                     val nsX: Float = event.getX(0)
                     val nsY: Float = event.getY(0)
@@ -123,21 +131,18 @@ class MyRenderer(
                     lastAngle = angle
                 }
             }
-            MotionEvent.ACTION_UP -> {
-//                ptrID1 = INVALID_POINTER_ID
-                lastAngle = 0f
-            }
             MotionEvent.ACTION_POINTER_2_UP -> {
-//                ptrID2 = INVALID_POINTER_ID
+                Log.v("Andrew", "Pointer 2 up")
+
+                previousX = event.getX(0);
+                previousY = event.getY(0);
             }
-            MotionEvent.ACTION_CANCEL -> {
-//                ptrID1 = INVALID_POINTER_ID
-//                ptrID2 = INVALID_POINTER_ID
+            MotionEvent.ACTION_POINTER_UP -> {
+                Log.v("Andrew", "Pointer up")
+                previousX = event.getX(1);
+                previousY = event.getY(1);
             }
         }
-
-        previousX = x
-        previousY = y
     }
 
     private fun angleBetweenLines(fX: Float, fY: Float, sX: Float, sY: Float, nfX: Float, nfY: Float, nsX: Float, nsY: Float): Float {

@@ -10,5 +10,6 @@ import retrofit2.http.Query
 interface HeliusEndpoints {
 
     @POST("/")
-    suspend fun loadVideos(@Query("key") key: String, @Body request: HeliusRequest): HeliusResult
+    suspend fun loadVideos(@Body request: HeliusRequest): HeliusResult
+
 }

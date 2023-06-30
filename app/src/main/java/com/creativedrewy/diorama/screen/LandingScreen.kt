@@ -17,17 +17,17 @@ import androidx.compose.ui.input.pointer.pointerInteropFilter
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.creativedrewy.diorama.rendering.DioramaTextureView
+import com.creativedrewy.diorama.viewmodel.ConfiguratorViewModel
 import org.rajawali3d.view.ISurface
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun LandingScreen(
-
+    viewmodel: ConfiguratorViewModel = hiltViewModel()
 ) {
-    Box(
-
-    ) {
+    Box{
         val ctx = LocalContext.current
         val textureView = remember { DioramaTextureView(ctx) }
 

@@ -20,11 +20,12 @@ import androidx.compose.ui.viewinterop.AndroidView
 import com.creativedrewy.diorama.rendering.DioramaTextureView
 import com.creativedrewy.diorama.screen.LandingScreen
 import com.creativedrewy.diorama.theme.DioramaTheme
+import dagger.hilt.android.AndroidEntryPoint
 import org.rajawali3d.view.ISurface
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
-    @OptIn(ExperimentalComposeUiApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {

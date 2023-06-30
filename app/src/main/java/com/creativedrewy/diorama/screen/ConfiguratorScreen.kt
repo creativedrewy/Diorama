@@ -1,7 +1,6 @@
 package com.creativedrewy.diorama.screen
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
@@ -9,7 +8,6 @@ import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.itemsIndexed
@@ -26,17 +24,18 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInteropFilter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
+import com.bumptech.glide.integration.compose.GlideImage
 import com.creativedrewy.diorama.rendering.DioramaTextureView
 import com.creativedrewy.diorama.viewmodel.ConfiguratorViewModel
 import org.rajawali3d.view.ISurface
 
-@OptIn(ExperimentalComposeUiApi::class)
+@OptIn(ExperimentalComposeUiApi::class, ExperimentalGlideComposeApi::class)
 @Composable
-fun LandingScreen(
+fun ConfiguratorScreen(
     configViewModel: ConfiguratorViewModel = hiltViewModel()
 ) {
     Box{
@@ -78,28 +77,18 @@ fun LandingScreen(
                 horizontalArrangement = Arrangement.spacedBy(10.dp)
             ) {
                 itemsIndexed(items = uiState.nftPreviews) { _, nft ->
-                    Box(
+                    GlideImage(
+                        model = nft.uri,
                         modifier = Modifier
                             .fillMaxWidth()
                             .aspectRatio(1.0f)
-                            .background(Color.Red)
-                    )
-
-//                    GlideImage(
-//                        model = media.path,
-//                        contentDescription = stringResource(R.string.image_content_desc),
-//                        modifier = Modifier
-//                            .width(76.dp)
-//                            .aspectRatio(1.0f)
-//                            .clip(RoundedCornerShape(8.dp))
-//                            .background(color = MaterialTheme.colorScheme.surface)
-//                            .clickable {
-//                                navigateToDetails(media.path)
-//                            },
-//                        contentScale = ContentScale.Crop
-//                    ) {
-//                        it.thumbnail()
-//                    }
+                            .clip(RoundedCornerShape(8.dp))
+                            .background(color = Color.LightGray),
+                        contentScale = ContentScale.Crop,
+                        contentDescription = ""
+                    ) {
+                        it.thumbnail()
+                    }
                 }
             }
         }

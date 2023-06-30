@@ -3,12 +3,16 @@ package com.creativedrewy.diorama.rendering
 import android.content.Context
 import android.graphics.Color
 import android.util.AttributeSet
+import android.util.Log
 import android.view.MotionEvent
+import org.rajawali3d.Object3D
 import org.rajawali3d.cameras.Camera2D
 import org.rajawali3d.materials.Material
 import org.rajawali3d.math.vector.Vector3
 import org.rajawali3d.primitives.Plane
 import org.rajawali3d.renderer.Renderer
+import org.rajawali3d.util.ObjectColorPicker
+import org.rajawali3d.util.OnObjectPickedListener
 import org.rajawali3d.view.TextureView
 import javax.microedition.khronos.opengles.GL10
 import kotlin.math.abs
@@ -38,16 +42,46 @@ class MyRenderer(
     context: Context
 ) : Renderer(context) {
 
-    val plane = Plane(300f, 300f, 1, 1)
+    val plane1 = Plane(200f, 200f, 1, 1)
+    val plane2 = Plane(200f, 200f, 1, 1)
+
+    val objectPicker = ObjectColorPicker(this)
+
+    var selectedObj: Object3D? = null
 
     override fun initScene() {
         val material = Material()
         material.colorInfluence = 1f
         material.color = Color.RED
 
-        plane.material = material
+        plane1.material = material
+        plane1.x = -300.0
+        plane1.y = 300.0
 
-        currentScene.addChild(plane)
+        plane2.material = Material().apply {
+            colorInfluence = 1f
+            color = Color.GREEN
+        }
+        plane2.x = 300.0
+        plane2.y = -300.0
+
+        currentScene.addChild(plane1)
+        currentScene.addChild(plane2)
+
+        objectPicker.setOnObjectPickedListener(object: OnObjectPickedListener {
+            override fun onObjectPicked(target: Object3D) {
+                Log.v("Andrew", "You have picked an obj")
+                selectedObj = target
+            }
+
+            override fun onNoObjectPicked() {
+                Log.v("Andrew", "You have NOT picked an obj")
+                selectedObj = null
+            }
+        })
+
+        objectPicker.registerObject(plane1)
+        objectPicker.registerObject(plane2)
     }
 
     override fun onRenderSurfaceSizeChanged(gl: GL10?, width: Int, height: Int) {
@@ -81,6 +115,8 @@ class MyRenderer(
 
                 prevEvtX = startP1X
                 prevEvtY = startP1Y
+
+                objectPicker.getObjectAt(startP1X, startP1Y)
             }
             MotionEvent.ACTION_POINTER_2_DOWN -> {
                 startP2X = event.getX(1);
@@ -90,9 +126,11 @@ class MyRenderer(
                 val yDist = abs(startP1Y - startP2Y).toDouble()
 
                 startPinchDist = sqrt(xDist * xDist + yDist * yDist)
-                startScale = plane.scaleX
+                selectedObj?.let {
+                    startScale = it.scaleX
 
-                prevEvtAngle = plane.rotX
+                    prevEvtAngle = it.rotX
+                }
             }
             MotionEvent.ACTION_MOVE -> {
                 if (event.pointerCount == 1) {
@@ -101,8 +139,10 @@ class MyRenderer(
                     val deltaX = evtX - prevEvtX
                     val deltaY = evtY - prevEvtY
 
-                    plane.x += deltaX
-                    plane.y += -deltaY
+                    selectedObj?.let {
+                        it.x += deltaX
+                        it.y += -deltaY
+                    }
 
                     prevEvtX = evtX
                     prevEvtY = evtY
@@ -118,8 +158,10 @@ class MyRenderer(
                     val yDist = abs(currP1Y - currP2Y)
                     val newDist = sqrt((xDist * xDist + yDist * yDist).toDouble())
 
-                    plane.rotate(Vector3.Axis.Z, -(angle - prevEvtAngle))
-                    plane.setScale(startScale * (newDist / startPinchDist))
+                    selectedObj?.let {
+                        it.rotate(Vector3.Axis.Z, -(angle - prevEvtAngle))
+                        it.setScale(startScale * (newDist / startPinchDist))
+                    }
 
                     prevEvtAngle = angle
                 }

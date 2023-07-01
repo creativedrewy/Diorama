@@ -1,10 +1,14 @@
 package com.creativedrewy.diorama.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.creativedrewy.diorama.repository.HeliusApiRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 data class NftPreview(
@@ -18,7 +22,9 @@ data class ViewState(
 )
 
 @HiltViewModel
-class ConfiguratorViewModel @Inject constructor(): ViewModel() {
+class ConfiguratorViewModel @Inject constructor(
+    private val heliusApiRepository: HeliusApiRepository
+): ViewModel() {
 
     private val _configViewState = MutableStateFlow(ViewState())
 
@@ -34,6 +40,11 @@ class ConfiguratorViewModel @Inject constructor(): ViewModel() {
                     )
                 }
             )
+        }
+
+        viewModelScope.launch {
+            val result = heliusApiRepository.getAllAccountNfts()
+            Log.v("Andrew", "Your result count: ${result.total}")
         }
     }
 }

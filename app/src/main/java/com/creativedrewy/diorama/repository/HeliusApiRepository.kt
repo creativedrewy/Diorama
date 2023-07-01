@@ -1,5 +1,6 @@
 package com.creativedrewy.diorama.repository
 
+import com.creativedrewy.diorama.BuildConfig
 import com.creativedrewy.diorama.datamodel.HeliusRequest
 import com.creativedrewy.diorama.datamodel.HeliusResult
 import com.creativedrewy.diorama.datamodel.RequestParams
@@ -21,7 +22,7 @@ class HeliusApiRepository @Inject constructor(
                 )
             )
 
-            heliusEndpoints.loadVideos(requestBody)
+            heliusEndpoints.loadVideos(BuildConfig.HELIUS_KEY, requestBody)
         }
     }
 

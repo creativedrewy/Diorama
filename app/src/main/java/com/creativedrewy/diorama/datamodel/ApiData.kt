@@ -44,6 +44,6 @@ data class Content(
 
 @Serializable
 data class FileData(
-    val uri: String,
-    val mime: String
+    val uri: String?,
+    val mime: String?
 )

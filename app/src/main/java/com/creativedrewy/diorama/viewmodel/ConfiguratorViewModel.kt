@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.creativedrewy.diorama.repository.HeliusApiRepository
+import com.creativedrewy.diorama.usecase.NftMediaUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -13,8 +14,7 @@ import javax.inject.Inject
 
 data class NftPreview(
     val id: String,
-    val uri: String,
-    val type: String = ""
+    val uri: String
 )
 
 data class ViewState(
@@ -23,7 +23,7 @@ data class ViewState(
 
 @HiltViewModel
 class ConfiguratorViewModel @Inject constructor(
-    private val heliusApiRepository: HeliusApiRepository
+    private val nftMediaUseCase: NftMediaUseCase
 ): ViewModel() {
 
     private val _configViewState = MutableStateFlow(ViewState())
@@ -31,20 +31,19 @@ class ConfiguratorViewModel @Inject constructor(
     val configViewState = _configViewState.asStateFlow()
 
     init {
-        _configViewState.update {
-            ViewState(
-                (0..10).map {
-                    NftPreview(
-                        id = "1",
-                        uri = "https://cdn.pixabay.com/animation/2023/06/21/12/57/12-57-08-601_512.gif"
-                    )
-                }
-            )
-        }
-
         viewModelScope.launch {
-            val result = heliusApiRepository.getAllAccountNfts()
-            Log.v("Andrew", "Your result count: ${ result.total }")
+            val media = nftMediaUseCase.loadNftMedia()
+
+            val previews = media.map {
+                NftPreview(
+                    id = it.id,
+                    uri = it.uri,
+                )
+            }
+
+            _configViewState.update {
+                ViewState(previews)
+            }
         }
     }
 }

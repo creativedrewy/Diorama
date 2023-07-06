@@ -15,6 +15,7 @@ class HeliusApiRepository @Inject constructor(
     suspend fun getAllAccountNfts(): HeliusResult {
         val requestBody = HeliusRequest(
             params = RequestParams(
+                //TODO: Make this a parameter
                 ownerAddress = "8nxM7WoVm77VYkMze7S1rNuv2adoVXuZu5VDrhQNWGnu"
             )
         )

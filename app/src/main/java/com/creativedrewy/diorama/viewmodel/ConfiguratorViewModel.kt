@@ -44,7 +44,7 @@ class ConfiguratorViewModel @Inject constructor(
 
         viewModelScope.launch {
             val result = heliusApiRepository.getAllAccountNfts()
-            Log.v("Andrew", "Your result count: ${result.total}")
+            Log.v("Andrew", "Your result count: ${ result.total }")
         }
     }
 }

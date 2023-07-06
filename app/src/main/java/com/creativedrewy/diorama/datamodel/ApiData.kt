@@ -13,6 +13,11 @@ data class RequestParams(
     val limit: Number = 10
 )
 
+data class HeliusJsonRpcResult(
+    val jsonrpc: String,
+    val result: HeliusResult
+)
+
 data class HeliusResult(
     val total: Number,
     val limit: Number,
